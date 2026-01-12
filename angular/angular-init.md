@@ -63,10 +63,9 @@ rules: {
 ```bash
 npm i bootstrap
 npm i ngx-toastr
-npm i @fortawesome/angular-fontawesome
-npm i @fortawesome/free-solid-svg-icons
 npm i ngx-pagination
-npm i ngx-bootstrap
+ng add @angular/material
+ng add @coreui/angular
 ```
 
 7. Acomodar angular.json:
