@@ -33,7 +33,7 @@ rules: {
   "@typescript-eslint/no-explicit-any": "off",
 ```
 
-3. Buscar el archivo gr-common.zip, descomprimirlo y copiar el contenido de gr-common.zip a la carpeta del proyecto src\app
+3. Buscar el archivo gr-common-angular.zip, descomprimirlo y copiar el contenido de gr-common-angular.zip a la carpeta del proyecto src\app
 
 4. crear web-init.json en la carpeta public con el contenido especificado:
 
@@ -94,7 +94,7 @@ export const routes: Routes = [
 ];
 ```
 
-**Nota:** Si los archivos `auth/auth.routes.ts` y `config/config.routes.ts` no existen después de descomprimir gr-common.zip, crearlos con el siguiente contenido:
+**Nota:** Si los archivos `auth/auth.routes.ts` y `config/config.routes.ts` no existen después de descomprimir gr-common-angular.zip, crearlos con el siguiente contenido:
 
 - src/app/auth/auth.routes.ts:
 

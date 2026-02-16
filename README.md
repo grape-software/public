@@ -4,42 +4,51 @@ Este repositorio contiene plantillas, instrucciones y archivos de configuración
 
 ## 📁 Estructura del Repositorio
 
-### Angular (Microfrontends)
-Archivos y configuraciones para inicializar microfrontends con Angular y Native Federation:
+### 📂 init-repos/
+Archivos para inicializar nuevos repositorios:
 
 - **`angular-init.md`**: Instrucciones paso a paso para crear e inicializar un nuevo proyecto de microfrontend Angular
-- **`gr-common.zip`**: Archivo comprimido con componentes y servicios comunes (shared) que se deben copiar a `src/app` en cada microfrontend
-- **`instructions/angular.md`**: Guías y mejores prácticas para desarrollo con Angular
-- **`prompts/builds.md`**: Prompts y configuraciones para builds y despliegues
-
-### NetCore (Microservicios)
-Archivos y configuraciones para inicializar microservicios con .NET Core:
-
+- **`gr-common-angular.zip`**: Archivo comprimido con componentes y servicios comunes (shared) que se deben copiar a `src/app` en cada microfrontend
 - **`microservice-netcore-init.md`**: Instrucciones para crear e inicializar un nuevo microservicio .NET Core
-- **`microservice-netcore-artifacts.md`**: Artefactos y configuraciones necesarias para microservicios
+
+### 📂 instructions/
+Guías y mejores prácticas para desarrollo:
+
+- **`angular.md`**: Guías y mejores prácticas para desarrollo con Angular
+- **`net.md`**: Guías y mejores prácticas para desarrollo con .NET Core
+
+### 📂 prompts/
+Prompts y configuraciones especializadas:
+
+- **`migrations.md`**: Prompts para migraciones y actualizaciones
+- **`new-layout.md`**: Prompts para nuevos layouts y estructuras
 
 ## 🚀 Uso
 
 ### Para inicializar un nuevo microfrontend Angular:
 
-1. Descargar `angular-init.md` y `gr-common.zip` de este repositorio
+1. Descargar `init-repos/angular-init.md` y `init-repos/gr-common-angular.zip` de este repositorio
 2. Seguir las instrucciones en `angular-init.md`
-3. Extraer el contenido de `gr-common.zip` en la carpeta `src/app` del proyecto
+3. Extraer el contenido de `gr-common-angular.zip` en la carpeta `src/app` del proyecto
 4. Consultar `instructions/angular.md` para guías adicionales de desarrollo
 
 ### Para inicializar un nuevo microservicio .NET Core:
 
-1. Descargar los archivos `.md` de la carpeta `netcore`
-2. Seguir las instrucciones en `microservice-netcore-init.md`
-3. Consultar `microservice-netcore-artifacts.md` para configuraciones adicionales
+1. Descargar `init-repos/microservice-netcore-init.md` de este repositorio
+2. Seguir las instrucciones en el archivo
+3. Consultar `instructions/net.md` para guías adicionales de desarrollo
 
 ## 📦 Archivos Clave
 
 | Archivo | Descripción |
 |---------|-------------|
-| `angular/gr-common.zip` | Componentes compartidos para microfrontends Angular |
-| `angular/angular-init.md` | Guía de inicialización de microfrontends |
-| `netcore/microservice-netcore-init.md` | Guía de inicialización de microservicios |
+| `init-repos/gr-common-angular.zip` | Componentes compartidos para microfrontends Angular |
+| `init-repos/angular-init.md` | Guía de inicialización de microfrontends |
+| `init-repos/microservice-netcore-init.md` | Guía de inicialización de microservicios |
+| `instructions/angular.md` | Mejores prácticas para Angular |
+| `instructions/net.md` | Mejores prácticas para .NET Core |
+| `prompts/migrations.md` | Prompts para migraciones |
+| `prompts/new-layout.md` | Prompts para nuevos layouts |
 
 ## 🔗 Automatización
 
