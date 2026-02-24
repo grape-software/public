@@ -115,75 +115,36 @@ export const CONFIG_ROUTES: Routes = [];
 9. Acomodar app.config.ts:
 
 ```typescript
-import * as jsonData from '../../public/web-init.json';
+import {
+  ApplicationConfig,
+  importProvidersFrom,
+  inject,
+  provideAppInitializer,
+} from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule, provideRouter } from '@angular/router';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
-import { APP_INITIALIZER, ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
-
-import { AUTH_ROUTES } from './auth/auth.routes';
-import { CONFIG_ROUTES } from './config/config.routes';
 import { DOCUMENT } from '@angular/common';
+import { ModalService } from '@coreui/angular';
 import { TenantsService } from './services/tenants.service';
-import { TokenInterceptor } from './core/http-interceptor.interceptor';
-import { WebConfig } from './WebConfig';
+import { initializeAppFactory } from './core/initializeAppFactory';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideRouter } from '@angular/router';
 import { provideToastr } from 'ngx-toastr';
 import { routes } from './app.routes';
-import { sharedProviders } from './core/core.providers';
-
-function initializeAppFactory(
-  tenantsService: TenantsService,
-  document: Document,
-): () => Observable<any> {
-  return () =>
-    tenantsService.getInfoFromUrl('WEB-INIT').pipe(
-      tap((r: any) => {
-        const config = Object.assign(new WebConfig(), jsonData); // jsonData as WebConfig;
-        if (r && r.length > 0) {
-          const webInitParam = Object.assign(new WebConfig(), JSON.parse(r[0].value));
-          if (webInitParam) {
-            Object.assign(config, webInitParam); // hace un merge de los atributos de webInitParam en config
-          }
-          config.tenantId = r[0].tenantId;
-        }
-        tenantsService.config = config; // para actualizar lo que se leyo de la base
-        localStorage.setItem('webConfig', JSON.stringify(config));
-        if (config.styleSheetName) {
-          const styleLink = document.createElement('link');
-          styleLink.rel = 'stylesheet';
-          if (config.styleSheetName.startsWith('http')) {
-            styleLink.href = config.styleSheetName;
-          } else {
-            styleLink.href = `assets/css/${config.styleSheetName}.css`;
-          }
-          document.head.appendChild(styleLink);
-        }
-      }),
-    );
-}
+import { tokenInterceptor } from './core/http-interceptor.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideAnimations(), // required animations providers
     provideToastr({}),
-    provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter([...routes, ...CONFIG_ROUTES, ...AUTH_ROUTES]),
+    provideRouter([...routes]),
     // provideRouter(routes),
     // provideAppInitializer(() => initializeAppFactory(inject(TenantsService))),
-    ...sharedProviders,
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializeAppFactory,
-      deps: [TenantsService, DOCUMENT],
-      multi: true,
-    },
-    provideHttpClient(
-      // DI-based interceptors must be explicitly enabled.
-      withInterceptorsFromDi(),
-    ),
-    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
+    ModalService,
+    importProvidersFrom(RouterModule, FormsModule, ReactiveFormsModule),
+    provideAppInitializer(() => initializeAppFactory(inject(TenantsService), inject(DOCUMENT))),
+    provideHttpClient(withInterceptors([tokenInterceptor])),
   ],
 };
 ```
@@ -334,21 +295,12 @@ export const environment = {
   production: false,
   useBrowserUrl: false, // if set to true origin is replace by browser url
   useRenaper: false,
-  version: '1.0.4',
-  coreUrl: 'https://cmcpsi.sandbox.ar/api/core',
-};
-```
-
-- environment.development.ts
-
-```typescript
-export const environment = {
-  production: false,
-  useBrowserUrl: false,
   version: '1.0.0',
   coreUrl: 'https://cmcpsi.sandbox.ar/api/core',
 };
 ```
+
+- environment.development.ts, eliminar el archivo si existe
 
 - environment.prod.ts
 
@@ -392,11 +344,11 @@ La configuración de development ya debería tener el fileReplacements configura
 ```typescript
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { SpinnerComponent } from './core/spinner/spinner.component';
+import { LayoutSpinnerComponent } from './shared/spinner/layout-spinner.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, SpinnerComponent],
+  imports: [RouterOutlet, LayoutSpinnerComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
