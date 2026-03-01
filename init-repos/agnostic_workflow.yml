@@ -1,0 +1,22 @@
+# .NET Agnostic Workflow for Reusable Deployment
+# This workflow should be added automatically to new .NET projects.
+
+name: Using a Reusable Workflow LONG
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, dev]
+
+jobs:
+  docker:
+    uses: ${{ github.repository_owner }}/ReusableWorkflow/.github/workflows/deploy_net_template.yml@main
+    with:
+      image_name: ${{ github.event.repository.name }}
+      tag: ${{ github.ref_name }}
+    secrets:
+      registry_username: ${{ secrets.REGISTRY_USERNAME }}
+      registry_password: ${{ secrets.REGISTRY_PASSWORD }}
+      registry: acrprodneox.azurecr.io
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID_PROD: ${{ secrets.TELEGRAM_CHAT_ID_PROD }}

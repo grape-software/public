@@ -1,0 +1,96 @@
+name: dev-Web-Server
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+
+#frontend        
+    - name: Install dependencies frontend
+      working-directory: ./frontend
+      run: npm ci
+      
+    - name: Build Angular app frontend
+      working-directory: ./frontend
+      run: npm run build -- --configuration=production
+      
+    - name: Upload build artifacts frontend
+      uses: actions/upload-artifact@v4
+      with:
+        name: angular-build-frontend
+        path: frontend/dist/
+        retention-days: 1
+
+ 
+
+#DEPLOYMENTS 
+  deploy:
+    needs: build
+    runs-on: [dev]
+    
+    steps:
+#para frontend    
+    - name: Download build artifacts frontend
+      uses: actions/download-artifact@v4
+      with:
+        name: angular-build-frontend
+        path: /tmp/angular-build-frontend
+        
+    - name: Display downloaded files frontend
+      run: |
+        echo "Contenido descargado:"
+        ls -la /tmp/angular-build-frontend/
+ 
+
+
+        
+
+
+        
+    - name: Deploy to server
+      run: |
+        # # Backup
+        # if [ -d "/usr/share/nginx/html/frontend/frontend" ]; then
+        #   timestamp=$(date +%Y%m%d_%H%M%S)
+        #    cp -r /usr/share/nginx/html/frontend/frontend "/usr/share/nginx/html/frontend_frontend_backup_$timestamp"
+        # fi
+        
+        # Preparar nuevo deployment en la carpeta NEW
+         mkdir -p /usr/share/nginx/html/frontend/colegios-new
+         cp -r /tmp/angular-build-frontend/colegios/browser/* /usr/share/nginx/html/frontend/colegios-new
+         #REVISAR PERMISOS
+         # chown -R nginx:nginx /usr/share/nginx/html/frontend-frontend-new/
+         # chmod -R 755 /usr/share/nginx/html/frontend-frontend-new/
+        
+        # Deployment atómico
+         # rm -rf /usr/share/nginx/html/frontend/frontend
+         
+         #resguardo el viejo despliegue
+           #borro la  copia anterior de backup
+         rm -rf /usr/share/nginx/html/frontend/colegios-old
+         mv /usr/share/nginx/html/frontend/colegios /usr/share/nginx/html/frontend/colegios-old
+         
+         #copio el nuevo despliegue (ademas la carpeta colegios-new deja de existir)
+         mv /usr/share/nginx/html/frontend/colegios-new /usr/share/nginx/html/frontend/colegios
+        
+        #copio directamente del  temporal  al destino final.
+        #cp -r /tmp/angular-build-frontend/colegios/browser/* /usr/share/nginx/html/frontend/colegios
+        #limpio el directorio temporal 
+        rm -rf /tmp/angular-build-frontend/colegios/browser/*
+        
+        echo "✅ Deployment completado en /usr/share/nginx/html/frontend/colegios"
