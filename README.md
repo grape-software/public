@@ -7,6 +7,10 @@ Este repositorio contiene plantillas, instrucciones y archivos de configuración
 Se va a inicializar el proyecto con el nombre del repositorio. Buscar el detalle de las acciones a ejecutar en la web https://github.com/grape-software/docs/blob/main/docs/agents/init-repos/angular-init.md en el punto 3 el archivo gr-common-angular.zip se encuentra en https://github.com/grape-software/docs/blob/main/docs/agents/init-repos/gr-common-angular.zip
 Con estas instrucciones puedes construir el microfrontend con las configuraciones estándar de Grape Software, incluyendo la estructura del proyecto, dependencias, y componentes compartidos.
 
+## Prompt para inicializar un nuevo microservicio .NET en Github:
+Se va a inicializar el proyecto con el nombre del repositorio. Buscar el detalle de las acciones a ejecutar en la web https://github.com/grape-software/public/blob/main/init-repos/microservice-netcore-init.md.
+Con estas instrucciones puedes construir el microservicio de .NET con las configuraciones estándar de Grape Software, incluyendo la estructura del proyecto, dependencias, y componentes compartidos.
+
 ## 📁 Estructura del Repositorio
 
 ### 📂 init-repos/
