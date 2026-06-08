@@ -1230,3 +1230,42 @@ Content-Type: application/json
     "description": "Sample Description"
 }
 ```
+
+
+## GitHub Actions CI/CD Configuration
+
+This section describes how to configure the CI/CD pipeline for a new .NET microservice repository. The pipeline uses a reusable workflow hosted in `grape-software/ReusableWorkflow` that handles building, pushing the Docker image to the container registry, and sending Telegram notifications.
+
+### Step 1 — Create the workflow file
+
+Download the workflow file from this repository and place it in `.github/workflows/`:
+
+```bash
+mkdir -p .github/workflows
+curl -L -o .github/workflows/agnostic_workflow.yml \
+  https://raw.githubusercontent.com/grape-software/public/main/init-repos/agnostic_workflow.yml
+```
+
+> The canonical source for this file is `grape-software/public/init-repos/agnostic_workflow.yml`. Any updates to the workflow template must be applied there.
+
+### Step 2 — Create GitHub repository secrets
+
+Run the following commands using the GitHub CLI (`gh`) from the root of the new repository. These commands create the required secrets with **placeholder values**.
+
+> ⚠️ **Important:** The values below are mock placeholders. After running these commands, go to the repository settings on GitHub (`Settings > Secrets and variables > Actions`) and replace each secret with the real value provided by the Grape Software ops team.
+
+```bash
+gh secret set REGISTRY_USERNAME --body "REPLACE_WITH_REAL_VALUE"
+gh secret set REGISTRY_PASSWORD --body "REPLACE_WITH_REAL_VALUE"
+gh secret set TELEGRAM_BOT_TOKEN --body "REPLACE_WITH_REAL_VALUE"
+gh secret set TELEGRAM_CHAT_ID_PROD --body "REPLACE_WITH_REAL_VALUE"
+gh secret set TELEGRAM_CHAT_ID_DEV --body "REPLACE_WITH_REAL_VALUE"
+```
+
+| Secret | Description |
+|--------|-------------|
+| `REGISTRY_USERNAME` | Username to authenticate against the Azure Container Registry (`acrprodneox.azurecr.io`) |
+| `REGISTRY_PASSWORD` | Password for the container registry |
+| `TELEGRAM_BOT_TOKEN` | Token of the Telegram bot used to send deployment notifications |
+| `TELEGRAM_CHAT_ID_PROD` | Telegram chat ID for production deployment notifications |
+| `TELEGRAM_CHAT_ID_DEV` | Telegram chat ID for development branch notifications |
