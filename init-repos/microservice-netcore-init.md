@@ -408,6 +408,13 @@ Before library installation, ensure NuGet.Config is set to use the Grape Softwar
         <add key="github" value="https://nuget.pkg.github.com/grape-software/index.json" />
         <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
     </packageSources>
+    <packageSourceCredentials>
+        <github>
+            <add key="Username" value="GrapeDevAR" />
+            <add key="ClearTextPassword"
+                value="%NUGET_AUTH_TOKEN%" />
+        </github>
+    </packageSourceCredentials>
 </configuration>
 ```
 
@@ -925,15 +932,42 @@ WORKDIR /app
 EXPOSE 8080
 
 # Copy everything else and build
+ARG NUGET_AUTH_TOKEN
+ENV NUGET_AUTH_TOKEN=$NUGET_AUTH_TOKEN
+
+# Copy everything else and build
 COPY . ./
 RUN dotnet publish -c Release -o out
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
+
+# 1. Actualización segura
+RUN apt-get update && \
+    apt-get upgrade -y --no-install-recommends && \
+    # Paquetes esenciales específicos
+    apt-get install -y --no-install-recommends \
+    libgdiplus \
+    libc6-dev \
+    curl   # Añadimos curl para healthcheck
+
+# Limpieza
+RUN apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* 
+
+# Verificación
+RUN echo "Versiones críticas:" && \
+    dpkg -l libc6 zlib1g openssl
+
 WORKDIR /app
 COPY --from=build-env /app/out .
 ENV TZ=America/Buenos_Aires
 RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && dpkg-reconfigure -f noninteractive tzdata
+
+# Healthcheck configuration - usando el endpoint /status
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8080/status | grep -q "Versi" || exit 1
 
 ENTRYPOINT ["dotnet", "services.dll"]
 ```
