@@ -1303,3 +1303,7 @@ gh secret set TELEGRAM_CHAT_ID_DEV --body "REPLACE_WITH_REAL_VALUE"
 | `TELEGRAM_BOT_TOKEN` | Token of the Telegram bot used to send deployment notifications |
 | `TELEGRAM_CHAT_ID_PROD` | Telegram chat ID for production deployment notifications |
 | `TELEGRAM_CHAT_ID_DEV` | Telegram chat ID for development branch notifications |
+
+## Install skills
+
+Create a folder .claude and copy the skills existing in this repo in folder .claude/skills with the same structure.
