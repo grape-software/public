@@ -570,27 +570,10 @@ if (usePostgreSQL)
 else
     dbBuilder.UseSqlServer(builder.Configuration.GetConnectionString("Default"), x => x.UseNetTopologySuite());
 
-List<SystemIntegration> systemIntegrations = new List<SystemIntegration>();
-// WRN: Si la base no esta esto tira error
-using (AppDBContext db = new AppDBContext(dbBuilder.Options))
-{
-    // db.Database.EnsureCreated(); // remove in production
-    // si tiene la variable de entorno le da prioridad
-      if (!string.IsNullOrWhiteSpace(jwtSecret))
-          key = Encoding.ASCII.GetBytes(jwtSecret);
-      else
-      {
-          var secret = db.SystemsParameters.FirstOrDefault(z => z.Code == "JwtSecret");
-          if (secret == null)
-          {
-              Console.WriteLine("JwtSecret not found in SystemsParameters");
-              return;
-          }
-          key = Encoding.ASCII.GetBytes(secret.Value);
-      }
-    systemIntegrations = db.SystemsIntegrations.Where(x => x.Active).ToList();
-}
-builder.Services.AddSingleton<List<SystemIntegration>>(systemIntegrations); // esto es para que se inyecte en los controllers deberiamos pensar lo mismo con parametros de sistema
+if (!string.IsNullOrWhiteSpace(jwtSecret))
+    key = Encoding.ASCII.GetBytes(jwtSecret);
+else
+    Console.WriteLine("No se encontró el JwtSecret como variable de entorno. El JWT no podrá ser validado");
 
 builder.Services.AddAuthentication(x =>
 {
