@@ -1291,3 +1291,28 @@ gh secret set TELEGRAM_CHAT_ID_DEV --body "REPLACE_WITH_REAL_VALUE"
 ## Install skills
 
 Create a folder .claude and copy the skills existing in this repo in folder .claude/skills with the same structure.
+
+# Readme
+dejar en el readme.md esta especicación: 
+``` markdown 
+## Utilidades
+
+```bash
+# Ver paquetes desactualizados
+dotnet list package --outdated
+# Migrations
+## Eliminar el directorio migrations primero si existe
+dotnet ef migrations add InitialCreate
+dotnet ef migrations script --project services/services.csproj -o ./.sql/services-init.sql
+# Crear desde un backup
+SqlPackage.exe /Action:Script /SourceFile:"Core-2026-05-27-06-50.dacpac" /TargetDatabase:"Core" /OutputPath:"core-from-sqlpackage.sql"
+```
+## Comparación de base de datos
+El repositorio tiene migrations para determinar cuales son las tablas que utiliza. Cada vez que se produzca un cambio en la estructura de datos se deberán validar las bases de datos que utilizan este microservicio. Para ello se deben seguir los siguiente pasos:
+1. Ejecutar migrations para obtener el archivo SQL de las tablas del repositorio. OJO que viene las referenciadas tambien y a veces tienen menos atributos que la misma tabla en el microservicio que las administra
+2. Configurar las cadenas de conexiones del archivo _sql/compara/bases.json
+3. Ejecutar el comando de python en la carpeta _sql/compara: python compare_schema.py --source core-init.sql --config bases.json
+4. Verificar si existen cambios en los archivos de reporte de schema_diff_output
+5. Ejecutar los scripts de actualización de estructuras (con supervisión del DBA)
+
+```
