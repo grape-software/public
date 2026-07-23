@@ -437,6 +437,7 @@ dotnet add services package System.IdentityModel.Tokens.Jwt
 dotnet add services package System.Linq.Dynamic.Core
 dotnet add services package Microsoft.AspNetCore.Authentication.JwtBearer
 dotnet add services package Microsoft.AspNetCore.Mvc.NewtonsoftJson
+dotnet add services package Microsoft.EntityFrameworkCore.Design
 ```
 
 Add both SQL and PostgreSQL packages to allow switching between databases using environment variable.
