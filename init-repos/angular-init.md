@@ -336,7 +336,18 @@ La configuración de development ya debería tener el fileReplacements configura
 13. Acomodar la maquetacion de app.html segun la siguiente especificacion:
 
 ```html
-<app-spinner /> <router-outlet />
+<app-spinner />
+@if (esDev) {
+<details class="card mb-3">
+  <summary class="card-header">Rutas del microfront (solo desarrollo)</summary>
+  <div class="list-group list-group-flush">
+    @for (ruta of rutas(); track ruta) {
+    <a class="list-group-item list-group-item-action" [routerLink]="ruta">{{ ruta }}</a>
+    }
+  </div>
+</details>
+}
+<router-outlet />
 ```
 
 **Importante:** También es necesario importar SpinnerComponent en app.ts:
@@ -354,5 +365,29 @@ import { LayoutSpinnerComponent } from './shared/spinner/layout-spinner.componen
 })
 export class App {
   protected readonly title = signal('{PROJECT_NAME}');
+  // Solo para ejecutar el microfront sin shell: este componente no se expone.
+  // Lista las rutas de app.routes (resolviendo los loadChildren) para poder navegarlas en desarrollo.
+  protected readonly esDev = !environment.production;
+  protected readonly rutas = signal<string[]>([]);
+
+  constructor() {
+    if (this.esDev) {
+      this.collect(routes, '').then((urls) => this.rutas.set([...new Set(urls)].sort()));
+    }
+  }
+
+  /** Rutas hoja (con pantalla) de un árbol de rutas; los parámetros (:id) se reemplazan por un id de ejemplo. */
+  private async collect(list: Routes, base: string): Promise<string[]> {
+    const urls: string[][] = await Promise.all(
+      list.map(async (r: Route) => {
+        if (r.redirectTo !== undefined || r.path === '**') return [];
+        const path = [base, r.path].filter(Boolean).join('/');
+        const children = r.children ?? (r.loadChildren ? ((await r.loadChildren()) as Routes) : null);
+        if (children) return this.collect(children, path);
+        return path ? ['/' + path.replace(/:\w+/g, '1')] : [];
+      }),
+    );
+    return urls.flat();
+  }
 }
 ```
